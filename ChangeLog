@@ -1,3 +1,10 @@
+2020-05-22  Jason Morgan <dev@cropwell.net>
+	* Makefile: Add mingw target, add support for gcc under MinGW64,
+	            Add install target for Windows
+	* flip.h:   Add mingw defines, handle file renames under mingw
+	
+	* version 1.21
+
 2008-07-26  James R. Van Zandt  <jrv@vanzandt.comcast.net>
 
 	* Makefile (check): new target "check".  Include test-flip in

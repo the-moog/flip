@@ -149,6 +149,16 @@ void spec_exit PARMS ((void));
 # define SIG_T int
 #endif /* BSD */
 
+#ifdef MINGW
+# define NIX         /* see below */
+#ifndef PATHSIZE
+# define PATHSIZE    1027
+#endif /* PATHSIZE */
+# undef  BIGBUF
+# define  MVFILE(src, dest)     !((!DELFILE(dest) && !rename(src, dest)))
+# define SIG_T int
+#endif /* MINGW */
+
 #ifdef VMS
 #ifndef PATHSIZE
 # define PATHSIZE    1024

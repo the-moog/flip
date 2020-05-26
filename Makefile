@@ -4,7 +4,7 @@
 #                               -- Rahul Dhesi 1989/06/19
 
 PACKAGE = flip
-VERSION = 1.20
+VERSION = 1.21
 distdir = $(PACKAGE)-$(VERSION)
 srcdir = .
 TAR = tar
@@ -38,6 +38,25 @@ CFLAGS =
 CFMORE = -c -DNDEBUG -O -DVERSION=\"$(VERSION)\"
 LD = cc
 LDFLAGS = -o flip
+RM = rm -f
+
+# Work out the platform, including Windows
+ifeq '$(findstring ;,$(PATH))' ';'
+	UNAME := $(shell uname 2>NUL || echo Windows)
+else
+	UNAME := $(shell uname 2>/dev/null || echo Unknown)
+	UNAME := $(patsubst CYGWIN%,Cygwin,$(UNAME))
+	UNAME := $(patsubst MSYS%,MSYS,$(UNAME))
+	UNAME := $(patsubst MINGW%,MSYS,$(UNAME))
+endif
+
+# Platform specific differences here
+ifeq ($(UNAME),Windows)
+	CC = gcc
+	LD = gcc
+	RM = del
+	XTRA_OP = flip.exe
+endif
 
 # If your system does not supply getopt as a library function,
 # add getopt.o to the RHS list on the next line and uncomment the
@@ -49,7 +68,7 @@ OBJS = flip.o
 
 nothing:
 	@echo \
-	'Please type "make sys_v", "make bsd", "make uport", or "make ultrix"'
+	'Please type "make sys_v", "make bsd", "make uport", "make ultrix", or "make mingw"'
 
 sys_v:
 	make "CFLAGS=-DSYS_V -DIX" flip
@@ -63,6 +82,9 @@ bsd:
 ultrix:
 	make "CFLAGS=-DBSD -DULTRIX_BUG" flip
 
+mingw:
+	make "CFLAGS=-DMINGW" flip
+
 flip: $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS)
 
@@ -70,11 +92,21 @@ flip.o: flip.c flip.h
 	$(CC) $(CFLAGS) $(CFMORE) $*.c
 
 clean:
-	rm -f *.o core flip
+	$(RM) *.o core flip $(XTRA_OP)
 
-install:
+ifeq ($(UNAME),Windows)
+install: install-win
+else
+install: install-default
+endif
+
+install-win:
+	copy flip.exe c:\windows\system32
+
+install-default:
 	mv flip $(BINDIR)
 	cp flip.1 $(MANDIR)
+
 
 check:
 	bash test-flip
