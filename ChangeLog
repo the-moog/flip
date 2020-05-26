@@ -1,0 +1,39 @@
+2008-07-26  James R. Van Zandt  <jrv@vanzandt.comcast.net>
+
+	* Makefile (check): new target "check".  Include test-flip in
+	distribution file.  Add comments giving command to build on a
+	modern Unix system with a standard C compiler.
+
+	* test-flip: new shell script to test flip
+
+	* flip.h (SETFT): #include utime.h.  call utime with a struct
+	utimbuf rather than an array.
+
+	* flip.c: bring sccsid up to date.
+	(dofile): handle case NEITHER. Transfer old file permissions and
+	ownership to new file. Add return value to silence gcc warning.
+	(mstoix): add parens to silence gcc warning
+
+2008-07-25  James R. Van Zandt  <jrv@debian.org>
+
+	* flip.h (PATHSIZE): set PATHSIZE from FILENAME_MAX (in stdio.h)
+	if possible.
+	
+	* Makefile: version 1.20
+
+2001-07-15  James R. Van Zandt  <jrv@debian.org>
+
+	* flip.c: preserve file permissions.
+	Accept input from stdin, write to stdout (thanks to "Dwayne
+	C. Litzenberger" <dlitz@dlitz.net>) 
+
+	* flip.1: document the above.
+
+2001-07-13  James R. Van Zandt  <jrv@debian.org>
+
+	* Makefile (DISTFILES): add "dist" target.
+	* flip.c: help message inherits version number from Makefile
+	* flip.c: use mkstemp instead of mktemp to reduce security risk.
+
+	* version 1.19
+

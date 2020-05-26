@@ -1,0 +1,40 @@
+
+                             Installing Flip 1.00
+
+Installation instructions are provided for System V Release 2, 4.3BSD,
+Ultrix, Microport System V/AT, and MS-DOS/Turbo C.  To install under other
+similar environments look carefully in flip.h and make changes as needed.
+
+
+MS-DOS/TURBO C
+
+The files supplied are suitable for compilation with Borland's Turbo C 2.0
+for MS-DOS.
+
+A makefile "makefile.tcc" is supplied.  Use the command line compiler
+"tcc.exe".  You will need a good make program, such as NDMAKE.  Edit
+"turboc.cfg" so it correctly reflects the include directories on your
+system.  Then type "make -f makefile.tcc".
+
+You can also use the intergrated environment "tc.exe".  Convert "turboc.cfg"
+to "tcconfig.tc" using Borland's "tcconfig.exe" program.  Invoke tc.exe and
+load the configuration file "tcconfig.tc".  A project file "flip.prj" is
+supplied.  Compile as usual.
+
+
+SYSTEM V RELEASE 2, 4.3BSD, OR MICROPORT SYSTEM V/AT
+
+Rename the provided file "makefile.nix" to "makefile".
+
+Depending on the system, type:
+
+     make sys_v                 for System V Release 2
+     make bsd                   for 4.3BSD
+     make uport                 for Microport System V/AT (large model)
+     make ultrix                for Ultrix, includes bug fix, not tested
+
+It may work to do "make sys_v" for Microport System V/AT, but I'm not sure,
+as I haven't yet restored my small model libraries which vanished from my
+disk one day without warning.
+
+Under any flavor of **IX you can link "flip" to "toix" and "toms".

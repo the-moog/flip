@@ -1,0 +1,16 @@
+  chars   name              description
+
+   3710   flip.1            (**ix) manual for formatting with "nroff -man"
+   1731   makefile.nix      (**ix) make file 
+
+   4455   flip.man          (generic) formatted manual
+   1522   install.doc       (generic) installation instructions
+
+  13273   flip.c            (generic) flip C source
+   7556   flip.h            (generic) flip C source
+   2801   getopt.c          (generic) getopt function C source
+
+    605   makefile.tcc      (ms-dos/turbo c) make file
+     56   flip.prj          (ms-dos/turbo c) project file
+    140   turboc.cfg        (ms-dos/turbo c) configuration file
+  10224   turboc.c          (ms-dos/turbo c) C source

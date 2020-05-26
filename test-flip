@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# quit at first sign of trouble
+set -e
+
+WORKING="testfile expected tperm eperm"
+
+# preferably test executable in current directory, else in $PATH
+if [ -x ./flip ]; then FLIP=./flip; else FLIP=`which flip`; fi
+
+echo "testing $FLIP"
+
+echo -n "checking conversion from **IX to MSDOS... "
+echo $'ww\nww\rww\r\nww' >testfile
+echo $'ww\r\nww\rww\r\nww\r' >expected
+$FLIP -m testfile
+if diff -q testfile expected; then echo pass; else echo FAIL; 
+echo "expected result:"; dump expected; echo "actual result:"; dump testfile; 
+exit 1; fi
+
+echo -n "checking conversion from MSDOS to **IX... "
+echo $'ww\nww\rww\czww\r\nww' >testfile
+echo $'ww\nww\rww\czww\nww' >expected
+$FLIP -u testfile
+if diff -q testfile expected; then echo pass; else echo FAIL; 
+echo "expected result:"; dump expected; echo "actual result:"; dump testfile; 
+exit 1; fi
+
+echo -n "checking removal of trailing control Z... "
+echo $'wwww\cz' |head -c 5 >testfile
+echo $'wwww\cz' |head -c 4 >expected
+$FLIP -u testfile
+if diff -q testfile expected; then echo pass; else echo FAIL; 
+echo "expected result:"; dump expected; echo "actual result:"; dump testfile; 
+exit 1; fi
+
+echo -n "checking that permissions are preserved... "
+echo $'ww\nww\rww\xee\r\nww' >testfile; chmod 642 testfile;
+ls -l testfile|head -c 10 >eperm
+$FLIP -u testfile 2>/dev/null || true
+ls -l testfile|head -c 10 >tperm
+if diff -q eperm tperm; then echo pass; else echo FAIL; 
+echo "expected permissions: `cat eperm`";echo "actual permissions: `cat tperm`";
+exit 1; fi
+
+echo -n "checking that timestamps are preserved... "
+echo $'ww\nww\rww\xee\r\nww' >testfile; touch --date 2001-09-11 testfile
+echo $'ww\nww\rww\czww\nww' >expected; touch --date 2001-09-11 expected
+$FLIP -u testfile 2>/dev/null || true
+if [ ! testfile -nt expected ] && [ ! testfile -ot expected ]; then echo pass; else echo FAIL; 
+ls -l --full-time testfile expected
+exit 1; fi
+
+echo -n "checking that binary files are ignored... "
+echo $'ww\nww\rww\xee\r\nww' >testfile
+echo $'ww\nww\rww\xee\r\nww' >expected
+$FLIP -u testfile 2>/dev/null || true
+if diff -q testfile expected; then echo pass; else echo FAIL; 
+echo "expected result:"; dump expected; echo "actual result:"; dump testfile; 
+exit 1; fi
+
+echo -n "checking file truncation at control Z... "
+echo $'wwww\cz\r\nww\rww\nww' >testfile
+echo $'wwww' | head -c 4 >expected
+$FLIP -u -z testfile
+if diff -q testfile expected; then echo pass; else echo FAIL; 
+echo "expected result:"; dump expected; echo "actual result:"; dump testfile; 
+exit 1; fi
+
+rm -rf $WORKING
+
